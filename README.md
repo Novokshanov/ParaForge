@@ -1,6 +1,6 @@
-# Parallel Corpora Generator
+# ParaForge: Parallel Subcorpora Generator
 
-A command-line tool for generating parallel corpora from JSON files containing sentences with lemmas and tags.
+A command-line tool for generating parallel subcorpora from JSON files containing sentences with lemmas and tags. As a starting point for this project we've chosen [tsakorpus](https://tsakorpus.readthedocs.io/) corpora data scructure as a baseline.
 
 ## Overview
 
@@ -69,58 +69,35 @@ python -m src.cli --data-dir custom_data --output-dir custom_output
 
 ## Input Format
 
-The tool expects JSON files containing linguistic corpora data with detailed word analysis. Each JSON file should have the following structure:
+The tool expects JSON files containing corpora data with sentences, lemmas, and tags. Please proceed to [Tsakorpus documentation page] (https://tsakorpus.readthedocs.io/en/latest/categories.html) to find out more.
+
+Example expected JSON structure:
 
 ```json
 {
-  "meta": {
-    "filename": "path/to/source.txt",
-    "title": "Document Title",
-    "author": "",
-    "year_from": "2014",
-    "year_to": "2014",
-    "genre": "press",
-    "issue": "2014.02.13",
-    "original": "original",
-    "orthography": "orth_norm"
-  },
-  "sentences": [
-    {
-      "words": [
-        {
-          "wf": "WordForm",
-          "wtype": "word",
-          "ana": [
-            {
-              "lex": "lemma",
-              "gr.pos": "POS",
-              "gr.number": "sg/pl",
-              "gr.case": "nom/gen/dat/acc/abl/loc",
-              "trans_ru": "translation",
-              "trans_ru2": "alternative translation"
-            }
-          ]
-        }
-      ],
-      "text": "Complete sentence text"
-    }
-  ]
+"sentences": [
+   {
+      "words":
+{
+    "wf": "word1"
+    "ana": [
+        "lex": "corpus",
+        "gr.pos": "N",
+        "gr.number": "pl",
+        "gr.case": "acc"
+    ],
+    "wf": "word2"
+    "ana": [
+        "lex": "corpus",
+        "gr.pos": "N",
+        "gr.number": "pl",
+        "gr.case": "acc"
+    ]
+}
+"text": "word1 word2"
+}
 }
 ```
-
-The parser processes this JSON structure and extracts:
-1. Original sentences from the "text" field
-2. Processed sentences where each word is converted to its translation with grammatical tags
-
-Supported grammatical tags include:
-- Numbers: 1, 2, 3
-- Gender: masc, fem
-- Number: sg (singular), pl (plural)
-- Case: nom, gen, dat, acc, abl, loc
-- Tense: pst, prs, fut
-
-Words with multiple translations will be formatted as: primary[alternative1, alternative2]
-Grammatical tags are added in angle brackets: translation<tag1,tag2>
 
 ## Output Format
 
