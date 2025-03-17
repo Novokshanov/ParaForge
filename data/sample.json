@@ -1,0 +1,27 @@
+[
+  {
+    "sentence": "The quick brown fox jumps over the lazy dog.",
+    "lemmas": ["the", "quick", "brown", "fox", "jump", "over", "the", "lazy", "dog"],
+    "tags": ["DET", "ADJ", "ADJ", "NOUN", "VERB", "ADP", "DET", "ADJ", "NOUN"]
+  },
+  {
+    "sentence": "A journey of a thousand miles begins with a single step.",
+    "lemmas": ["a", "journey", "of", "a", "thousand", "mile", "begin", "with", "a", "single", "step"],
+    "tags": ["DET", "NOUN", "ADP", "DET", "NUM", "NOUN", "VERB", "ADP", "DET", "ADJ", "NOUN"]
+  },
+  {
+    "sentence": "To be or not to be, that is the question.",
+    "lemmas": ["to", "be", "or", "not", "to", "be", "that", "be", "the", "question"],
+    "tags": ["PART", "VERB", "CCONJ", "ADV", "PART", "VERB", "PRON", "VERB", "DET", "NOUN"]
+  },
+  {
+    "sentence": "All that glitters is not gold.",
+    "lemmas": ["all", "that", "glitter", "be", "not", "gold"],
+    "tags": ["PRON", "PRON", "VERB", "VERB", "ADV", "NOUN"]
+  },
+  {
+    "sentence": "The early bird catches the worm.",
+    "lemmas": ["the", "early", "bird", "catch", "the", "worm"],
+    "tags": ["DET", "ADJ", "NOUN", "VERB", "DET", "NOUN"]
+  }
+] 

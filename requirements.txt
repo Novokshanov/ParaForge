@@ -1,0 +1,14 @@
+torch>=2.0.0
+# vLLM is optional but recommended for faster inference
+vllm>=0.2.0
+# Transformers is used as a fallback if vLLM is not available
+transformers>=4.30.0
+accelerate>=0.20.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0
+numpy>=1.24.0
+tqdm>=4.65.0
+# Additional dependencies that might help with vLLM installation
+ninja
+packaging
+setuptools>=49.4.0 
