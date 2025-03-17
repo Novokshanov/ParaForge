@@ -80,16 +80,16 @@ def process_file(file_path: Path, model, output_dir: Path) -> None:
     
     try:
         # Parse the JSON file to get sentences
-        sentences = parse_json_file(file_path)
+        original_sentences, processed_sentences = parse_json_file(file_path)
         
         # Generate parallel sentences using the model
-        generated_sentences = generate_parallel_sentences(model, sentences)
+        generated_sentences = generate_parallel_sentences(model, processed_sentences)
         
         # Create output filename
         output_file = output_dir / f"{file_path.stem}_parallel.json"
         
         # Save the parallel corpora
-        save_parallel_corpora(sentences, generated_sentences, output_file)
+        save_parallel_corpora(original_sentences, generated_sentences, output_file)
         
     except Exception as e:
         print(f"Error processing {file_path}: {str(e)}")

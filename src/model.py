@@ -9,10 +9,6 @@ import sys
 def initialize_model() -> Any:
     """
     Initialize the language model using vLLM if available, or fall back to transformers.
-    
-    Args:
-        model_name: Name of the model to use (default: "Qwen/Qwen2.5-0.5B-Instruct")
-        use_gpu: Whether to use GPU if available (default: True)
         
     Returns:
         Initialized model
@@ -29,7 +25,7 @@ def initialize_model() -> Any:
         device = "cpu"
         print("Using CPU")
     
-    model_name: str = "Qwen/Qwen2.5-0.5B-Instruct"
+    model_name: str = "Seelt/Qwen2.5-0.5B-ParaForge-v0.1"
     
     # Try to use vLLM first
     try:
@@ -82,25 +78,28 @@ def initialize_model() -> Any:
                     results = []
                     
                     for prompt in prompts:
+                        # prompt = self.tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
                         inputs = self.tokenizer(prompt, return_tensors="pt")
                         if self.device == "cuda":
                             inputs = {k: v.to("cuda") for k, v in inputs.items()}
                         
-                        # Generate
                         with torch.no_grad():
                             output_ids = self.model.generate(
                                 inputs["input_ids"],
-                                max_new_tokens=sampling_params.max_tokens,
-                                do_sample=True,
-                                temperature=sampling_params.temperature,
-                                top_p=sampling_params.top_p,
+                                max_new_tokens=24,
+                                do_sample=False,
+                                # temperature=0.9,
+                                top_p=0.9,
+                                num_return_sequences=1,
+                                pad_token_id=self.tokenizer.eos_token_id,
                             )
                         
                         # Decode
                         output_text = self.tokenizer.decode(output_ids[0], skip_special_tokens=True)
-                        
                         # Extract the generated part (after the prompt)
                         generated_text = output_text[len(prompt):]
+                        generated_text = generated_text.split("\n")[0]
+                        # generated_text = output_text
                         
                         # Create a result object similar to vLLM's output
                         class Output:
@@ -139,6 +138,49 @@ def generate_parallel_sentences(model, sentences: List[str]) -> List[str]:
     Returns:
         List of generated sentences
     """
+
+    tag_instructions = """<тэги>
+    <лицо>
+    1 - первое лицо;
+    2 - второе лицо;
+    3 - третье лицо;
+    </лицо>
+    <род>
+    masc - мужской;
+    fem - женский;
+    </род>
+    <число>
+    sg - единственное число;
+    pl - множественное число;
+    </число>
+    <падежи>
+    nom - именительный;
+    gen - родительный;
+    dat - дательный;
+    acc - винительный;
+    abl - творительный;
+    loc - предложеный;
+    </падежи>
+    <время>
+    pst - прошедшее;
+    prs - настоящее;
+    fut - будущее;
+    </время>
+    </тэги>"""
+
+    instruction_template = f"""
+    Инструкция: Восстанови предложение из лемм и грамматических тегов.
+    Описание тегов:
+    {tag_instructions}
+
+    Пример:
+    Input: мама<sg,nom> драить[мыть,чистить]<3,fem,sg,pst> грязный окно<sg,acc>
+    Output: Мама драила грязное окно
+
+    Теперь заполни:
+    Input: {{input}}
+    Output:
+    """
     if not sentences:
         return []
     
@@ -146,30 +188,30 @@ def generate_parallel_sentences(model, sentences: List[str]) -> List[str]:
     try:
         from vllm import SamplingParams
         sampling_params = SamplingParams(
-            temperature=0.7,
-            top_p=0.9,
-            max_tokens=100,
+            temperature=0.9,  # Match transformers temperature
+            top_p=0.9,       # Match transformers top_p
+            max_tokens=24,   # Match transformers max_new_tokens
+            n=1,            # Equivalent to num_return_sequences=1
         )
-    except ImportError:
+    except:
         # Create a simple class to mimic SamplingParams for the transformers fallback
         class SamplingParamsSimple:
-            def __init__(self, temperature=0.7, top_p=0.9, max_tokens=100):
+            def __init__(self, temperature=0.9, top_p=0.9, max_tokens=24):
                 self.temperature = temperature
                 self.top_p = top_p
                 self.max_tokens = max_tokens
         
         sampling_params = SamplingParamsSimple(
-            temperature=0.7,
+            temperature=0.9,
             top_p=0.9,
-            max_tokens=100,
+            max_tokens=24,
         )
     
     # Prepare prompts for each sentence
     prompts = []
     for sentence in sentences:
         # Create a simple prompt that asks the model to rephrase the sentence
-        prompt = f"Rephrase the following sentence in a different way while preserving its meaning: \"{sentence}\"\nRephrased:"
-        prompts.append(prompt)
+        prompts.append(instruction_template.format(input=sentence))
     
     # Generate responses in batch for efficiency
     try:

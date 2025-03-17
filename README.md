@@ -69,20 +69,58 @@ python -m src.cli --data-dir custom_data --output-dir custom_output
 
 ## Input Format
 
-The tool expects JSON files containing corpora data with sentences, lemmas, and tags. The parser is currently a dummy implementation that will be replaced with an actual implementation later.
-
-Example expected JSON structure:
+The tool expects JSON files containing linguistic corpora data with detailed word analysis. Each JSON file should have the following structure:
 
 ```json
-[
-  {
-    "sentence": "This is a sample sentence.",
-    "lemmas": ["this", "be", "a", "sample", "sentence"],
-    "tags": ["DET", "VERB", "DET", "ADJ", "NOUN"]
+{
+  "meta": {
+    "filename": "path/to/source.txt",
+    "title": "Document Title",
+    "author": "",
+    "year_from": "2014",
+    "year_to": "2014",
+    "genre": "press",
+    "issue": "2014.02.13",
+    "original": "original",
+    "orthography": "orth_norm"
   },
-  ...
-]
+  "sentences": [
+    {
+      "words": [
+        {
+          "wf": "WordForm",
+          "wtype": "word",
+          "ana": [
+            {
+              "lex": "lemma",
+              "gr.pos": "POS",
+              "gr.number": "sg/pl",
+              "gr.case": "nom/gen/dat/acc/abl/loc",
+              "trans_ru": "translation",
+              "trans_ru2": "alternative translation"
+            }
+          ]
+        }
+      ],
+      "text": "Complete sentence text"
+    }
+  ]
+}
 ```
+
+The parser processes this JSON structure and extracts:
+1. Original sentences from the "text" field
+2. Processed sentences where each word is converted to its translation with grammatical tags
+
+Supported grammatical tags include:
+- Numbers: 1, 2, 3
+- Gender: masc, fem
+- Number: sg (singular), pl (plural)
+- Case: nom, gen, dat, acc, abl, loc
+- Tense: pst, prs, fut
+
+Words with multiple translations will be formatted as: primary[alternative1, alternative2]
+Grammatical tags are added in angle brackets: translation<tag1,tag2>
 
 ## Output Format
 
