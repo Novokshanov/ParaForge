@@ -11,7 +11,7 @@ This tool processes JSON files containing linguistic corpora data and uses a lan
 - Process individual JSON files or all JSON files in a directory
 - Utilize GPU acceleration with vLLM for faster processing (falls back to transformers if vLLM is not available)
 - Fall back to CPU if GPU is not available
-- Generate parallel sentences using the Qwen-0.5b model
+- Generate parallel sentences using the fine-tuned version of Qwen-0.5b model
 - Save results as JSON files with original and generated sentence pairs
 
 ## Installation
