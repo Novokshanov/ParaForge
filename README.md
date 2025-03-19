@@ -22,18 +22,7 @@ This tool processes JSON files containing linguistic corpora data and uses a lan
    cd parallel_corpora
    ```
 
-2. Run the installation script:
-   ```
-   python install.py
-   ```
-   
-   This script will:
-   - Install all required dependencies
-   - Try to install vLLM for faster processing
-   - Fall back to transformers if vLLM installation fails
-   - Provide information about your system's compatibility
-
-   Alternatively, you can manually install the dependencies:
+2. Install the dependencies:
    ```
    pip install -r requirements.txt
    ```
