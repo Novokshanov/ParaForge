@@ -5,6 +5,7 @@ import os
 import torch
 from typing import List, Dict, Any, Optional
 import sys
+from tqdm import tqdm
 
 def initialize_model() -> Any:
     """
@@ -77,7 +78,7 @@ def initialize_model() -> Any:
                 def generate(self, prompts, sampling_params):
                     results = []
                     
-                    for prompt in prompts:
+                    for prompt in tqdm(prompts, desc="Generating translations"):
                         # prompt = self.tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
                         inputs = self.tokenizer(prompt, return_tensors="pt")
                         if self.device == "cuda":
@@ -87,7 +88,7 @@ def initialize_model() -> Any:
                             output_ids = self.model.generate(
                                 inputs["input_ids"],
                                 max_new_tokens=24,
-                                do_sample=False,
+                                do_sample=True,
                                 # temperature=0.9,
                                 top_p=0.9,
                                 num_return_sequences=1,
@@ -196,7 +197,7 @@ def generate_parallel_sentences(model, sentences: List[str]) -> List[str]:
     except:
         # Create a simple class to mimic SamplingParams for the transformers fallback
         class SamplingParamsSimple:
-            def __init__(self, temperature=0.9, top_p=0.9, max_tokens=24):
+            def __init__(self, temperature=0.9, top_p=0.9, max_tokens=24, do_sample=True):
                 self.temperature = temperature
                 self.top_p = top_p
                 self.max_tokens = max_tokens
